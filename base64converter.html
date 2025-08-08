@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <script>
+      function convertToBase64(imageUri) {
+        fetch(imageUri)
+          .then(response => response.blob())
+          .then(blob => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const base64data = reader.result.split(',')[1];
+              window.parent.postMessage(base64data, "*");
+            };
+            reader.readAsDataURL(blob);
+          });
+      }
+
+      window.addEventListener("message", (event) => {
+        convertToBase64(event.data);
+      });
+    </script>
+  </body>
+</html>
