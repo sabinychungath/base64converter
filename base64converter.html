@@ -1,23 +1,59 @@
 <!DOCTYPE html>
-<html>
-  <body>
-    <script>
-      function convertToBase64(imageUri) {
-        fetch(imageUri)
-          .then(response => response.blob())
-          .then(blob => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              const base64data = reader.result.split(',')[1];
-              window.parent.postMessage(base64data, "*");
-            };
-            reader.readAsDataURL(blob);
-          });
-      }
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Base64 Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+    }
+    input[type="file"] {
+      display: block;
+      margin: 1rem auto;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-top: 1rem;
+      padding: 1rem;
+      font-family: monospace;
+      resize: vertical;
+    }
+  </style>
+</head>
+<body>
+  <h1>Base64 Image Converter</h1>
+  <input type="file" id="fileInput" accept="image/*" />
+  <textarea id="output" placeholder="Base64 output will appear here..."></textarea>
 
-      window.addEventListener("message", (event) => {
-        convertToBase64(event.data);
-      });
-    </script>
-  </body>
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const output = document.getElementById("output");
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result.split(",")[1];
+        output.value = base64;
+        window.parent.postMessage(base64, "*"); // For Thunkable
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Optional: Listen for messages from Thunkable
+    window.addEventListener("message", (event) => {
+      console.log("Received message from Thunkable:", event.data);
+    });
+  </script>
+</body>
 </html>
+
