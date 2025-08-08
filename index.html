@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Base64 Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 2rem;
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    input[type="file"] {
+      margin: 1rem 0;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+      margin-top: 1rem;
+      padding: 1rem;
+      font-family: monospace;
+      resize: vertical;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Base64 Image Converter</h1>
+  <input type="file" id="fileInput" accept="image/*" />
+  <textarea id="output" placeholder="Base64 output will appear here..."></textarea>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const output = document.getElementById("output");
+
+    fileInput.addEventListener("change", () => {
+      const file = fileInput.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64 = reader.result.split(",")[1];
+        output.value = base64;
+        window.parent.postMessage(base64, "*"); // For Thunkable
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Optional: Listen for messages from Thunkable
+    window.addEventListener("message", (event) => {
+      console.log("Received message from Thunkable:", event.data);
+    });
+  </script>
+</body>
+</html>
